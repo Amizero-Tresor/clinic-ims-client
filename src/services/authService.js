@@ -1,8 +1,8 @@
-import axios from '../api/axios';
+import instance from '../api/axios';
 
 export const register = async (username, password) => {
   try {
-    const response = await axios.post('/auth/register', { username, password });
+    const response = await instance.post('/auth/register', { username, password });
     return response.data;
   } catch (error) {
     throw error.response.data;
@@ -11,7 +11,7 @@ export const register = async (username, password) => {
 
 export const login = async (username, password) => {
   try {
-    const response = await axios.post('/auth/login', { username, password });
+    const response = await instance.post('/api/auth/login', { email:username, password });
     localStorage.setItem('token', response.data.token);
     return response.data;
   } catch (error) {

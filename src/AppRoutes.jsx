@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login/Login';
 import StudentsView from './components/Display/EmployeeView';
@@ -19,7 +18,7 @@ const AppRoutes = () => {
       <Route path='/products'  element={<ProductsView/>} />
       <Route path="/stock" element={<StockView/>}/>
       <Route path="/incomingTransactions" element={<IncomingTransactionsView />} />
-        <Route path="/outgoingTransactions" element={<OutgoingTransactionsView />} />
+      <Route path="/outgoingTransactions" element={<OutgoingTransactionsView />} />
     </Routes>
   </Router>
   );

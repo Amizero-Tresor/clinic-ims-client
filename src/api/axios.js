@@ -1,10 +1,10 @@
 import axios from 'axios';
 const instance = axios.create({
-  baseURL: "http://localhost:5000"
+  baseURL: "https://clinic-ims.onrender.com"
   ,
 });
 
-
+export const baseURL = "https://clinic-ims.onrender.com";
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {

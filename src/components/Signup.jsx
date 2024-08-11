@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { signup } from '../services/userService';
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -14,9 +16,10 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await signup({ username, email, password });
+      const response = await signup({ firstName,lastName, email, password, phoneNumber, type: "ADMIN" });
       setMessage(response.message);
-      setUsername('');
+      setFirstName('');
+      setLastName('');
       setEmail('');
       setPassword('');
       navigate('/login'); // Navigate to login after successful signup
@@ -38,14 +41,27 @@ const Signup = () => {
         <form onSubmit={handleSignup}>
           <div className="mb-6">
             <label htmlFor="username" className="block font-bold text-blue">
-              Username
+              First Name
             </label>
             <input
               type="text"
               id="username"
               className="mt-1 block w-full px-3 py-2 border-b-2 border-blue shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="username" className="block font-bold text-blue">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="username"
+              className="mt-1 block w-full px-3 py-2 border-b-2 border-blue shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               required
             />
           </div>
@@ -59,6 +75,19 @@ const Signup = () => {
               className="mt-1 block w-full px-3 py-2 border-b-2 border-blue shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="phone" className="block font-bold text-blue">
+              Phone
+            </label>
+            <input
+              type="number"
+              id="phone"
+              className="mt-1 block w-full px-3 py-2 border-b-2 border-blue shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               required
             />
           </div>
@@ -88,7 +117,7 @@ const Signup = () => {
         </form>
         <button
           className="w-[70%] mx-[15%] mt-4 py-2 px-4 bg-gray-500 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-          onClick={handleBypassSignup}
+          onClick={handleSignup}
         >
            Signup
         </button>

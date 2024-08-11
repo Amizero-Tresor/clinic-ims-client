@@ -1,5 +1,6 @@
 import axios from 'axios';
-const API_BASE_URL = 'http://localhost:5000/api/employees'; // Update to backend URL
+import { baseURL } from '../api/axios';
+const API_BASE_URL = `${baseURL}/api/employees`; // Update to backend URL
 
 // Get all employees without pagination
 export const getEmployees = async () => {
@@ -8,7 +9,7 @@ export const getEmployees = async () => {
     console.log(response.data);  // Log the correct response data
     return response.data;
   } catch (error) {
-    console.error('Error fetching employees:', error.message);
+    console.error('Error fetching employees:', error);
     throw error.response?.data || error.message;
   }
 };

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import Logo from "../../assets/LOGO.svg";
 import axios from 'axios';
+import instance from '../../api/axios';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -16,7 +17,7 @@ const Login = () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const response = await axios.get('/api/auth/check', {
+          const response = await instance.get('/api/auth/check', {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.data.authenticated) {
@@ -38,15 +39,8 @@ const Login = () => {
       navigate('/employees');
     } catch (err) {
       console.log(err);
-      setError('Login failed. Please check your credentials.');
+      setError(err.message);
     }
-  };
-
-  const handleBypassLogin = () => {
-    // Set a mock token in localStorage
-    localStorage.setItem('token', 'mock-token');
-    // Navigate to the /students page
-    navigate('/employees');
   };
 
   return (
@@ -89,7 +83,7 @@ const Login = () => {
         </form>
         <button
           className="w-[70%] mx-[15%] mt-4 py-2 px-4 bg-gray-500 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-          onClick={handleBypassLogin}
+          onClick={handleLogin}
         >
            Login
         </button>
