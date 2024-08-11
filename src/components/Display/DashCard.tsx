@@ -36,7 +36,6 @@ const DashCard = () => {
         <div className="w-[45%] grid grid-cols-3 gap-2 mb-8">
           <Cards title="Employees" count={employees.length} loading={loadingEmployees}/>
           <Cards title="Laptops in stock" count={stock.length} loading={loadingStock}/>
-          <Cards title="Users" count={40} loading={false}/>
         </div>
       </>
   )

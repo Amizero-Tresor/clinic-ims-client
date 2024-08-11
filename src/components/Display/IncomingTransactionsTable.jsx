@@ -18,7 +18,7 @@ const IncomingTransactionTable = () => {
     const fetchTransactions = async () => {
       try {
         const data = await getIncomingTransactions();
-        setTransactions(data.transactions || []);
+        setTransactions(data || []);
       } catch (error) {
         toast.error(`Error fetching incoming transactions: ${error.message}`);
         setTransactions([]);

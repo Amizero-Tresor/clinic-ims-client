@@ -42,7 +42,13 @@ const OutgoingTransactionsTable = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const addedTransaction = await createOutgoingTransaction(newTransaction);
+      const newData = {
+        productName: newTransaction.productName,
+        quantity: parseInt(newTransaction.quantity),
+        employeeName: newTransaction.employeeName, // Using the actual value from the form
+        employeePhone: newTransaction.employeePhone
+      };
+      const addedTransaction = await createOutgoingTransaction(newData);
       setTransactions([...transactions, addedTransaction]);
       setNewTransaction({
         productName: '',
