@@ -18,19 +18,30 @@ const StockTable = () => {
   useEffect(() => {
     const fetchStocks = async () => {
       try {
-        const data = await getStocks();  // Assuming getStocks fetches all stocks without pagination
-        setStocks(data.stocks || []);  // Ensure stocks is always an array
+        const data = await getStocks();
+        console.log('Fetched data:', data); // Log to check the entire response structure
+        // Check if the response contains stocks data in a different key
+        // For example, if the stocks are directly under `data`, use `data` instead of `data.stocks`
+        if (Array.isArray(data)) {
+          setStocks(data);
+        } else if (data && data.stocks) {
+          setStocks(data.stocks);
+        } else {
+          console.error('Stocks data is not available or has a different structure');
+          setStocks([]);
+        }
       } catch (error) {
         console.error('Error fetching stocks:', error.message);
-        setStocks([]);  // Set stocks to an empty array if fetching fails
-      }
-      finally {
+        setStocks([]);
+      } finally {
         setLoading(false);
       }
     };
-
+  
     fetchStocks();
   }, []);
+  
+  
   
 
   return (
