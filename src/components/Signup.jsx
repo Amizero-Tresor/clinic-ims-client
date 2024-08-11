@@ -34,7 +34,7 @@ const Signup = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center bg-[#F9FAFF]">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-center text-2xl font-bold mb-6 text-blue">Employee Signup</h2>
+        <h2 className="text-center text-2xl font-bold mb-6 text-blue"> Signup</h2>
         <form onSubmit={handleSignup}>
           <div className="mb-6">
             <label htmlFor="username" className="block font-bold text-blue">

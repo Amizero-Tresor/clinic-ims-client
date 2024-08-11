@@ -3,16 +3,13 @@ import { getIncomingTransactions } from '../../services/transactionService';
 
 const IncomingTransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch incoming transactions when the component mounts and whenever the page changes
+  // Fetch incoming transactions when the component mounts
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const data = await getIncomingTransactions(currentPage, 3);
+        const data = await getIncomingTransactions();
         setTransactions(data.transactions || []);  // Ensure transactions is always an array
-        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching incoming transactions:', error.message);
         setTransactions([]);  // Set transactions to an empty array if fetching fails
@@ -20,14 +17,7 @@ const IncomingTransactionTable = () => {
     };
 
     fetchTransactions();
-  }, [currentPage]);
-
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  }, []);
 
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
@@ -57,25 +47,6 @@ const IncomingTransactionTable = () => {
           )}
         </tbody>
       </table>
-
-      {/* Pagination Controls */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="px-4 py-2 bg-blue text-white rounded-md"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span>{`Page ${currentPage} of ${totalPages}`}</span>
-        <button
-          className="px-4 py-2 bg-blue text-white rounded-md"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 };

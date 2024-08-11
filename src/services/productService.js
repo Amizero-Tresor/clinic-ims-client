@@ -1,19 +1,14 @@
 import axios from '../api/axios';
 
-const API_URL = '/products';
+const API_URL = 'api/products';
 
-export const getProducts = async (page = 1, limit = 10) => {
+export const getProducts = async () => {
   try {
-    const response = await axios.get(API_URL, {
-      params: {
-        page,
-        limit,
-      },
-    });
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error.message);
-    throw error.response.data;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -23,7 +18,7 @@ export const getProductById = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching product:', error.message);
-    throw error.response.data;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -33,7 +28,7 @@ export const addProduct = async (product) => {
     return response.data;
   } catch (error) {
     console.error('Error adding product:', error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -43,7 +38,7 @@ export const updateProduct = async (id, updatedProduct) => {
     return response.data;
   } catch (error) {
     console.error('Error updating product:', error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -53,6 +48,6 @@ export const deleteProduct = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting product:', error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };

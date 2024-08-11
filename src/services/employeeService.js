@@ -1,20 +1,15 @@
 import axios from 'axios';
+const API_BASE_URL = 'http://localhost:5000/api/employees'; // Update to backend URL
 
-const API_BASE_URL = '/api/employees'; // Base URL for the employee API
-
-// Get all employees with optional pagination
-export const getEmployees = async (page = 1, limit = 10) => {
+// Get all employees without pagination
+export const getEmployees = async () => {
   try {
-    const response = await axios.get(API_BASE_URL, {
-      params: {
-        page,
-        limit,
-      },
-    });
+    const response = await axios.get(API_BASE_URL);
+    console.log(response.data);  // Log the correct response data
     return response.data;
   } catch (error) {
     console.error('Error fetching employees:', error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -25,7 +20,7 @@ export const getEmployeeById = async (id) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching employee with ID ${id}:`, error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -36,7 +31,7 @@ export const addEmployee = async (employeeData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding employee:', error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -47,7 +42,7 @@ export const updateEmployee = async (id, employeeData) => {
     return response.data;
   } catch (error) {
     console.error(`Error updating employee with ID ${id}:`, error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -57,6 +52,6 @@ export const deleteEmployee = async (id) => {
     await axios.delete(`${API_BASE_URL}/${id}`);
   } catch (error) {
     console.error(`Error deleting employee with ID ${id}:`, error.message);
-    throw error;
+    throw error.response?.data || error.message;
   }
 };

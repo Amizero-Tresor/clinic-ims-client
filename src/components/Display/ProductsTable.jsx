@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, getProductById, deleteProduct, updateProduct, addProduct } from '../../services/productService';
+import { getProducts, deleteProduct, updateProduct, addProduct } from '../../services/productService';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -12,16 +12,12 @@ const ProductsTable = () => {
     stock: ''
   });
   const [editingProduct, setEditingProduct] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts(currentPage, 3);
-        const products = data;
-        setProducts(products);
-        setTotalPages(data.totalPages);
+        const data = await getProducts();
+        setProducts(data || []); // Safeguard to ensure products is always an array
       } catch (error) {
         console.error('Error fetching products:', error.message);
         setProducts([]); // Initialize to an empty array in case of error
@@ -29,7 +25,7 @@ const ProductsTable = () => {
     };
 
     fetchProducts();
-  }, [currentPage]);
+  }, []);
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -78,12 +74,6 @@ const ProductsTable = () => {
     }
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
-
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
@@ -97,13 +87,9 @@ const ProductsTable = () => {
       </div>
       <hr className="text-blue mb-3" />
       <table className="w-full text-left table-auto">
-        <thead className=''>
+        <thead>
           <tr className="text-blue font-bold">
             <th>Product Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Stock</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -112,10 +98,6 @@ const ProductsTable = () => {
             products.map((product, index) => (
               <tr key={index}>
                 <td>{product.productName}</td>
-                <td>{product.price}</td>
-                <td>{product.description}</td>
-                <td>{product.category}</td>
-                <td>{product.stock}</td> 
                 <td>
                   <button 
                     className="bg-green-500 text-white px-4 py-2 rounded-[2rem] border border-transparent hover:border-green-500 hover:bg-white hover:text-green-500 transition-all duration-150" 
@@ -134,29 +116,11 @@ const ProductsTable = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="6" className="text-center">No products available</td>
+              <td colSpan="2" className="text-center">No products available</td>
             </tr>
           )}
         </tbody>
       </table>
-
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="w-[7%] px-4 py-4 bg-blue text-white rounded-[2rem] border border-blue hover:bg-white hover:text-blue transition-all duration-150"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span>{`Page ${currentPage} of ${totalPages}`}</span>
-        <button
-          className="w-[5%] px-4 py-4 bg-blue text-white rounded-[2rem] border border-blue hover:bg-white hover:text-blue transition-all duration-150"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
 
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -170,50 +134,6 @@ const ProductsTable = () => {
                     type="text"
                     name="productName"
                     value={newProduct.productName}
-                    onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Price</label>
-                  <input
-                    type="text"
-                    name="price"
-                    value={newProduct.price}
-                    onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Description</label>
-                  <input
-                    type="text"
-                    name="description"
-                    value={newProduct.description}
-                    onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Category</label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={newProduct.category}
-                    onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Stock</label>
-                  <input
-                    type="number"
-                    name="stock"
-                    value={newProduct.stock}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required

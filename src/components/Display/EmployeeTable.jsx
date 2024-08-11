@@ -10,16 +10,13 @@ const EmployeeTable = () => {
     phoneNumber: '',
   });
   const [editingEmployee, setEditingEmployee] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const data = await getEmployees(currentPage, 3);
+        const data = await getEmployees();
         if (data && data.employees) {
           setEmployees(data.employees);
-          setTotalPages(data.totalPages || 1);
         } else {
           setEmployees([]);  // Safeguard to ensure employees is always an array
         }
@@ -29,7 +26,7 @@ const EmployeeTable = () => {
     };
 
     fetchEmployees();
-  }, [currentPage]);
+  }, []);
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -45,7 +42,7 @@ const EmployeeTable = () => {
     try {
       if (editingEmployee) {
         await updateEmployee(editingEmployee.id, newEmployee);
-        setEmployees(employees.map(emp => (emp.id === editingEmployee.id ? newEmployee : emp)));
+        setEmployees(employees.map(emp => (emp.id === editingEmployee.id ? { ...emp, ...newEmployee } : emp)));
       } else {
         const addedEmployee = await addEmployee(newEmployee);
         setEmployees([...employees, addedEmployee]);
@@ -73,12 +70,6 @@ const EmployeeTable = () => {
       setEmployees(employees.filter(emp => emp.id !== id));
     } catch (error) {
       console.error('Error deleting employee:', error.message);
-    }
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
     }
   };
 
@@ -131,24 +122,6 @@ const EmployeeTable = () => {
       ) : (
         <p>No employees found.</p>
       )}
-
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="w-[7%] px-4 py-4 bg-blue text-white rounded-[2rem] border border-blue hover:bg-white hover:text-blue transition-all duration-150"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span>{`Page ${currentPage} of ${totalPages}`}</span>
-        <button
-          className="w-[5%] px-4 py-4 bg-blue text-white rounded-[2rem] border border-blue hover:bg-white hover:text-blue transition-all duration-150"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
 
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
