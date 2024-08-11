@@ -35,7 +35,12 @@ const IncomingTransactionTable = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const addedTransaction = await createIncomingTransaction(newTransaction);
+      const newData = {
+        productName: newTransaction.productName,
+        quantity: parseInt(newTransaction.quantity),
+        expirationDate: "2024-08-22T17:33:00Z", // just testing format
+      }
+        const addedTransaction = await createIncomingTransaction(newData);
         setTransactions([...transactions, addedTransaction]);
       setNewTransaction({
         employeeName: '',
