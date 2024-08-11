@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts, deleteProduct, updateProduct, addProduct } from '../../services/productService';
+import { ClipLoader } from 'react-spinners';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [newProduct, setNewProduct] = useState({
     productName: '',
     price: '',
@@ -21,6 +24,8 @@ const ProductsTable = () => {
       } catch (error) {
         console.error('Error fetching products:', error.message);
         setProducts([]); // Initialize to an empty array in case of error
+      } finally {
+        setLoading(false);  // Set loading to false after fetching products
       }
     };
 
@@ -38,10 +43,13 @@ const ProductsTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when submitting the form
     try {
       if (editingProduct) {
         await updateProduct(editingProduct.id, newProduct);
-        setProducts(products.map(product => (product.id === editingProduct.id ? newProduct : product)));
+        setProducts(products.map(product => 
+          product.id === editingProduct.id ? { ...product, ...newProduct } : product
+        ));
       } else {
         const addedProduct = await addProduct(newProduct);
         setProducts([...products, addedProduct]);
@@ -56,6 +64,8 @@ const ProductsTable = () => {
       togglePopup();
     } catch (error) {
       console.error('Error saving product:', error.message);
+    } finally {
+      setLoading(false);  // Set loading to false after the submission process is done
     }
   };
 
@@ -66,11 +76,14 @@ const ProductsTable = () => {
   };
 
   const handleDelete = async (id) => {
+    setLoading(true); // Set loading to true when deleting a product
     try {
       await deleteProduct(id);
       setProducts(products.filter(product => product.id !== id));
     } catch (error) {
       console.error('Error deleting product:', error.message);
+    } finally {
+      setLoading(false); // Set loading to false after deletion
     }
   };
 
@@ -86,19 +99,25 @@ const ProductsTable = () => {
         </button>
       </div>
       <hr className="text-blue mb-3" />
+      {loading ? 
+        <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+          <h1>Loading</h1>
+          <ClipLoader size={20} color='black'/>
+        </div>
+        :
       <table className="w-full text-left table-auto">
-        <thead>
+        <thead className='w-full'>
           <tr className="text-blue font-bold">
             <th>Product Name</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className='w-full'>
           {products && products.length > 0 ? (
             products.map((product, index) => (
               <tr key={index}>
                 <td>{product.productName}</td>
-                <td>
+                <td className='w-full flex justify-end'>
                   <button 
                     className="bg-green-500 text-white px-4 py-2 rounded-[2rem] border border-transparent hover:border-green-500 hover:bg-white hover:text-green-500 transition-all duration-150" 
                     onClick={() => handleEdit(product)}
@@ -121,6 +140,7 @@ const ProductsTable = () => {
           )}
         </tbody>
       </table>
+      }
 
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

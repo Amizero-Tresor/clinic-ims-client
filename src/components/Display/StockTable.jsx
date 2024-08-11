@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getStocks, getStockById } from '../../services/stockService';
+import { ClipLoader } from 'react-spinners';
 
 const StockTable = () => {
   const [stocks, setStocks] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [newStock, setNewStock] = useState({
     productName: '',
     quantity: '',
@@ -21,6 +24,9 @@ const StockTable = () => {
         console.error('Error fetching stocks:', error.message);
         setStocks([]);  // Set stocks to an empty array if fetching fails
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchStocks();
@@ -33,6 +39,14 @@ const StockTable = () => {
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Stocks</h3>
       </div>
       <hr className="text-blue mb-3" />
+      {
+        
+        loading ? 
+        <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+          <h1>Loading</h1>
+          <ClipLoader size={20} color='black'/>
+        </div>
+        :
       <table className="w-full text-left table-auto">
         <thead>
           <tr className="text-blue font-bold">
@@ -42,7 +56,8 @@ const StockTable = () => {
           </tr>
         </thead>
         <tbody>
-          {stocks.length > 0 ? (
+          {
+      stocks.length > 0 ? (
             stocks.map((stock, index) => (
               <tr key={index}>
                 <td>{stock.productName}</td>
@@ -57,6 +72,7 @@ const StockTable = () => {
           )}
         </tbody>
       </table>
+      }
     </div>
   );
 };

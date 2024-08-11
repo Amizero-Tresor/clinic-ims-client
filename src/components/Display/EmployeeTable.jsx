@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getEmployees, addEmployee, updateEmployee, deleteEmployee } from '../../services/employeeService';
+import { ClipLoader } from 'react-spinners';
 
 const EmployeeTable = ({employees,setEmployees}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [newEmployee, setNewEmployee] = useState({
     employeeName: '',
     department: '',
@@ -22,6 +24,9 @@ const EmployeeTable = ({employees,setEmployees}) => {
         }
       } catch (error) {
         console.error('Error fetching employees:', error.message);
+      }
+      finally {
+        setLoading(false);
       }
     };
 
@@ -90,14 +95,20 @@ const EmployeeTable = ({employees,setEmployees}) => {
         </button>
       </div>
       <hr className="text-blue mb-3" />
-      {employees.length > 0 ? (
+      {loading ? 
+      <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+        <h1>Loading</h1>
+        <ClipLoader size={20} color='black'/>
+      </div>
+      :
+      employees.length > 0 ? (
         <table className="w-full text-left table-auto">
           <thead className=''>
             <tr className="text-blue font-bold">
               <th>Employee Name</th>
               <th>Department</th>
               <th>Phone Number</th>
-              <th>Actions</th>
+              <th className='w-full flex justify-end'></th>
             </tr>
           </thead>
           <tbody>
@@ -106,7 +117,7 @@ const EmployeeTable = ({employees,setEmployees}) => {
                 <td>{employee.employeeName}</td>
                 <td>{employee.department}</td>
                 <td>{employee.phoneNumber}</td>
-                <td>
+                <td className='w-full flex justify-end'>
                   <button 
                     className="bg-green-500 text-white px-4 py-2 rounded-[2rem] border border-transparent hover:border-green-500 hover:bg-white hover:text-green-500 transition-all duration-150" 
                     onClick={() => handleEdit(employee)}

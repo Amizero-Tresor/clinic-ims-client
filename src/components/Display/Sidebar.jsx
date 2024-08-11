@@ -1,8 +1,16 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom'; // Use NavLink instead of Link for active state handling
+import { NavLink, useNavigate } from 'react-router-dom'; // Use NavLink instead of Link for active state handling
 import Logo from "../../assets/LOGO2.svg";
+import toast from 'react-hot-toast';
 
 const Sidebar = () => {
+  const router = useNavigate();
+  const logout  = ()=>{
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("successfully logged out");
+    router("/");
+  }
   return (
     <div className="ml-3 bg-blue mt-5 h-[80%] flex flex-col items-center text-white pt-4 px-6 shadow-xl">
       <div className="font-display text-lg mb-8">
@@ -59,6 +67,12 @@ const Sidebar = () => {
         >
           Outgoing Transactions
         </NavLink>
+        <button
+          onClick={logout}
+          className={`h-[3rem] px-5 flex items-center justify-center text-sm text-white hover:bg-red-400 rounded-[2rem] font-display font-bold p-2 transition-all duration-700`}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );

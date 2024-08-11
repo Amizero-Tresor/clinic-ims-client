@@ -1,94 +1,114 @@
 import React, { useState, useEffect } from 'react';
 import { createOutgoingTransaction, getOutgoingTransactions } from '../../services/transactionService';
+import { ClipLoader } from 'react-spinners';
 
 const OutgoingTransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
+  const [loading, setLoading] = useState(true);
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
     employeeName: "",
     employeePhone: "",
     quantity: 0,
-    
-  })
+  });
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const data = await getOutgoingTransactions();
-        // Ensure that `data` is an array before setting it in state
         setTransactions(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching outgoing transactions:', error.message);
         setTransactions([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTransactions();
   }, []);
+
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
+
   const handleChange = (e) => {
     setNewTransaction({ ...newTransaction, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-        const addedTransaction = await createOutgoingTransaction(newTransaction);
-        setTransactions([...transactions, addedTransaction]);
+      const addedTransaction = await createOutgoingTransaction(newTransaction);
+      setTransactions([...transactions, addedTransaction]);
       setNewTransaction({
+        productName: '',
         employeeName: '',
-        department: '',
-        phoneNumber: '',
+        employeePhone: '',
+        quantity: 0,
       });
       togglePopup();
     } catch (error) {
       console.error('Error saving transaction:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Outgoing Transactions</h3>
-        {user?.type === "MANAGER" && <button 
-          className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
-          onClick={togglePopup} 
-        >
-          New Transaction
-        </button>}
+        {user?.type === "MANAGER" && (
+          <button 
+            className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+            onClick={togglePopup} 
+          >
+            New Transaction
+          </button>
+        )}
       </div>
       <hr className="text-blue mb-3" />
-      <table className="w-full text-left table-auto">
-        <thead>
-          <tr className="text-blue font-bold">
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>Employee Name</th>
-            <th>Employee Phone</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.length > 0 ? (
-            transactions.map((transaction, index) => (
-              <tr key={index}>
-                <td>{transaction.productName}</td>
-                <td>{transaction.quantity}</td>
-                <td>{transaction.employeeName}</td>
-                <td>{transaction.employeePhone}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4" className="text-center">No outgoing transactions available.</td>
+      {loading ? 
+        <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+          <h1>Loading</h1>
+          <ClipLoader size={20} color='black'/>
+        </div>
+      :
+        <table className="w-full text-left table-auto">
+          <thead>
+            <tr className="text-blue font-bold">
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Employee Name</th>
+              <th>Employee Phone</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {transactions.length > 0 ? (
+              transactions.map((transaction, index) => (
+                <tr key={index}>
+                  <td>{transaction.productName}</td>
+                  <td>{transaction.quantity}</td>
+                  <td>{transaction.employeeName}</td>
+                  <td>{transaction.employeePhone}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center">No outgoing transactions available.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      }
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">{'Create New Transaction'}</h2>
+            <h2 className="text-xl font-bold mb-4">Create New Transaction</h2>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -148,7 +168,7 @@ const OutgoingTransactionsTable = () => {
                   type="submit"
                   className="px-4 py-2 bg-blue text-white rounded-md"
                 >
-                  {'Create'}
+                  Create
                 </button>
               </div>
             </form>
