@@ -1,11 +1,13 @@
 import axios from 'axios';
+import instance from '../api/axios';
 
 const API_URL = '/api/transactions';  // Base URL for transaction-related API calls
 
 // Create an incoming transaction
 export const createIncomingTransaction = async (transactionData) => {
   try {
-    const response = await axios.post(`${API_URL}/incoming`, transactionData);
+    const response = await instance.post(`${API_URL}/incoming`, transactionData);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error creating incoming transaction:', error.message);
@@ -16,7 +18,7 @@ export const createIncomingTransaction = async (transactionData) => {
 // Create an outgoing transaction
 export const createOutgoingTransaction = async (transactionData) => {
   try {
-    const response = await axios.post(`${API_URL}/outgoing`, transactionData);
+    const response = await instance.post(`${API_URL}/outgoing`, transactionData);
     return response.data;
   } catch (error) {
     console.error('Error creating outgoing transaction:', error.message);

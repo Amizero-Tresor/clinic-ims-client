@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getIncomingTransactions } from '../../services/transactionService';
+import { createIncomingTransaction, getIncomingTransactions } from '../../services/transactionService';
 
 const IncomingTransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
@@ -8,17 +8,18 @@ const IncomingTransactionTable = () => {
   // Fetch incoming transactions when the component mounts
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
-    quantity: "",
+    quantity: 0,
     expirationDate: "",
   })
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const data = await getIncomingTransactions();
-        setTransactions(data.transactions || []);  // Ensure transactions is always an array
+        setTransactions(data.transactions || []);  
       } catch (error) {
         console.error('Error fetching incoming transactions:', error.message);
-        setTransactions([]);  // Set transactions to an empty array if fetching fails
+        setTransactions([]);
       }
     };
 
@@ -30,12 +31,28 @@ const IncomingTransactionTable = () => {
   const handleChange = (e) => {
     setNewTransaction({ ...newTransaction, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const addedTransaction = await createIncomingTransaction(newTransaction);
+        setTransactions([...transactions, addedTransaction]);
+      setNewTransaction({
+        employeeName: '',
+        department: '',
+        phoneNumber: '',
+      });
+      togglePopup();
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+    }
+  };
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Incoming Transactions</h3>
         {user?.type === "ADMIN" && <button 
-          className="w-[10%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+          className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
           onClick={togglePopup} 
         >
           New Transaction
@@ -70,7 +87,7 @@ const IncomingTransactionTable = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg w-1/2">
             <h2 className="text-xl font-bold mb-4">{'Create New Transaction'}</h2>
-            <form >
+            <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold mb-1">Product Name</label>
@@ -86,9 +103,9 @@ const IncomingTransactionTable = () => {
                 <div>
                   <label className="block font-semibold mb-1">Quantity</label>
                   <input
-                    type="text"
+                    type="number"
                     name="quantity"
-                    value={newTransaction.department}
+                    value={newTransaction.quantity}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
@@ -97,7 +114,7 @@ const IncomingTransactionTable = () => {
                 <div>
                   <label className="block font-semibold mb-1">Expiration Date</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     name="expirationDate"
                     value={newTransaction.expirationDate}
                     onChange={handleChange}

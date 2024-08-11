@@ -83,7 +83,7 @@ const EmployeeTable = ({employees,setEmployees}) => {
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Employees</h3>
         <button 
-          className="w-[10%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+          className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
           onClick={togglePopup} 
         >
           New Employee

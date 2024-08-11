@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getOutgoingTransactions } from '../../services/transactionService';
+import { createOutgoingTransaction, getOutgoingTransactions } from '../../services/transactionService';
 
 const OutgoingTransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
-
+  const [newTransaction, setNewTransaction] = useState({
+    productName: "",
+    employeeName: "",
+    employeePhone: "",
+    quantity: 0,
+    
+  })
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -23,12 +29,30 @@ const OutgoingTransactionsTable = () => {
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
+  const handleChange = (e) => {
+    setNewTransaction({ ...newTransaction, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const addedTransaction = await createOutgoingTransaction(newTransaction);
+        setTransactions([...transactions, addedTransaction]);
+      setNewTransaction({
+        employeeName: '',
+        department: '',
+        phoneNumber: '',
+      });
+      togglePopup();
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+    }
+  };
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Outgoing Transactions</h3>
         {user?.type === "MANAGER" && <button 
-          className="w-[10%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+          className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
           onClick={togglePopup} 
         >
           New Transaction
@@ -65,37 +89,48 @@ const OutgoingTransactionsTable = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg w-1/2">
             <h2 className="text-xl font-bold mb-4">{'Create New Transaction'}</h2>
-            <form >
+            <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold mb-1">Transaction Name</label>
+                  <label className="block font-semibold mb-1">Product Name</label>
+                  <input
+                    type="text"
+                    name="productName"
+                    value={newTransaction.productName}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Quantity</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={newTransaction.quantity}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Employee Name</label>
                   <input
                     type="text"
                     name="employeeName"
-                    // value={newEmployee.employeeName}
-                    // onChange={handleChange}
+                    value={newTransaction.employeeName}
+                    onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Department</label>
+                  <label className="block font-semibold mb-1">Employee Phone</label>
                   <input
                     type="text"
-                    name="department"
-                    // value={newEmployee.department}
-                    // onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold mb-1">Phone Number</label>
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    // value={newEmployee.phoneNumber}
-                    // onChange={handleChange}
+                    name="employeePhone"
+                    value={newTransaction.employeePhone}
+                    onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
                   />
