@@ -26,12 +26,11 @@ const DashCard = () => {
     getDataFunc();
   },[])
   console.log(new Date().getHours())
-  const suffix = new Date().getHours() < 12 ? "Morning" : new Date().getHours() > 12 && new Date().getHours() < 14 ? "After Noon" : "Evening"
   return (
       <>
         <header className="mb-4">
           <h1 className="text-3xl font-bold text-blue">Dashboard</h1>
-          <p className="text-lg text-gray-500">Good {suffix}, {user?.firstName + " " + user?.lastName}</p>
+          <p className="text-lg text-gray-500">Hello {user?.firstName + " " + user?.lastName}</p>
         </header>
         <div className="w-[45%] grid grid-cols-3 gap-2 mb-8">
           <Cards title="Employees" count={employees.length} loading={loadingEmployees}/>
