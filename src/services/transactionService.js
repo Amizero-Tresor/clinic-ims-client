@@ -29,7 +29,7 @@ export const createOutgoingTransaction = async (transactionData) => {
 // Get an incoming transaction by ID
 export const getIncomingTransactionById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/incoming/${id}`);
+    const response = await instance.get(`${API_URL}/incoming/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching incoming transaction by ID:', error.message);
@@ -40,7 +40,7 @@ export const getIncomingTransactionById = async (id) => {
 // Get an outgoing transaction by ID
 export const getOutgoingTransactionById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/outgoing/${id}`);
+    const response = await instance.get(`${API_URL}/outgoing/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching outgoing transaction by ID:', error.message);
@@ -51,7 +51,7 @@ export const getOutgoingTransactionById = async (id) => {
 // Get all incoming transactions
 export const getIncomingTransactions = async () => {
   try {
-    const response = await axios.get(`${API_URL}/incoming`);
+    const response = await instance.get(`${API_URL}/incoming`);
     return response.data;
   } catch (error) {
     console.error('Error fetching incoming transactions:', error.message);
@@ -62,7 +62,7 @@ export const getIncomingTransactions = async () => {
 // Get all outgoing transactions
 export const getOutgoingTransactions = async () => {
   try {
-    const response = await axios.get(`${API_URL}/outgoing`);
+    const response = await instance.get(`${API_URL}/outgoing`);
     return response.data;
   } catch (error) {
     console.error('Error fetching outgoing transactions:', error.message);
