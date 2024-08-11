@@ -10,3 +10,11 @@ export const signup = async (userData) => {
     throw error.response.data;
   }
 };
+export const getProfile = async (userData) => {
+  try {
+    const response = await instance.post('/api/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

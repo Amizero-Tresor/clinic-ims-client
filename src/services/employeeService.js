@@ -31,7 +31,7 @@ export const addEmployee = async (employeeData) => {
     const response = await axios.post(API_BASE_URL, employeeData);
     return response.data;
   } catch (error) {
-    console.error('Error adding employee:', error.message);
+    console.error('Error adding employee:', error);
     throw error.response?.data || error.message;
   }
 };

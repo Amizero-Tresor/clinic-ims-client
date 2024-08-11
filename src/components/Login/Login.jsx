@@ -35,10 +35,11 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(username, password);
+      const data = await login(username, password);
+      console.log(data);
+      localStorage.setItem("user", JSON.stringify(data.user));
       navigate('/employees');
     } catch (err) {
-      console.log(err);
       setError(err.message);
     }
   };

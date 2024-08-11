@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getEmployees, addEmployee, updateEmployee, deleteEmployee } from '../../services/employeeService';
 
-const EmployeeTable = () => {
-  const [employees, setEmployees] = useState([]);
+const EmployeeTable = ({employees,setEmployees}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [newEmployee, setNewEmployee] = useState({
     employeeName: '',
@@ -15,8 +14,9 @@ const EmployeeTable = () => {
     const fetchEmployees = async () => {
       try {
         const data = await getEmployees();
-        if (data && data.employees) {
-          setEmployees(data.employees);
+        console.log(data);
+        if (data) {
+          setEmployees(data);
         } else {
           setEmployees([]);  // Safeguard to ensure employees is always an array
         }
@@ -45,6 +45,11 @@ const EmployeeTable = () => {
         setEmployees(employees.map(emp => (emp.id === editingEmployee.id ? { ...emp, ...newEmployee } : emp)));
       } else {
         const addedEmployee = await addEmployee(newEmployee);
+        setNewEmployee({
+          employeeName: '',
+          department: '',
+          phoneNumber: '',
+        })
         setEmployees([...employees, addedEmployee]);
       }
       setNewEmployee({
