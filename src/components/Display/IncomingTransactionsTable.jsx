@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createIncomingTransaction, getIncomingTransactions } from '../../services/transactionService';
+import { getProducts } from '../../services/productService'; // Assuming you have a productService for fetching products
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
@@ -8,6 +9,7 @@ const IncomingTransactionTable = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]); // State to hold the fetched products
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
     quantity: 0,
@@ -23,11 +25,22 @@ const IncomingTransactionTable = () => {
         toast.error(`Error fetching incoming transactions: ${error.message}`);
         setTransactions([]);
       } finally {
-        setLoading(false);  // Set loading to false after fetching transactions
+        setLoading(false);
+      }
+    };
+
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data || []);
+      } catch (error) {
+        toast.error(`Error fetching products: ${error.message}`);
+        setProducts([]);
       }
     };
 
     fetchTransactions();
+    fetchProducts();
   }, []);
 
   const togglePopup = () => {
@@ -40,12 +53,12 @@ const IncomingTransactionTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when submitting the form
+    setLoading(true);
     try {
       const newData = {
         productName: newTransaction.productName,
         quantity: parseInt(newTransaction.quantity),
-        expirationDate: newTransaction.expirationDate, // Using the actual value from the form
+        expirationDate: newTransaction.expirationDate,
       };
       const addedTransaction = await createIncomingTransaction(newData);
       setTransactions([...transactions, addedTransaction]);
@@ -58,7 +71,7 @@ const IncomingTransactionTable = () => {
     } catch (error) {
       toast.error('Error saving transaction');
     } finally {
-      setLoading(false);  // Set loading to false after the submission process is done
+      setLoading(false);
     }
   };
 
@@ -115,14 +128,20 @@ const IncomingTransactionTable = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold mb-1">Product Name</label>
-                  <input
-                    type="text"
+                  <select
                     name="productName"
-                    value={newTransaction.productName}  // Corrected this line
+                    value={newTransaction.productName}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="" disabled>Select a product</option>
+                    {products.map((product) => (
+                      <option key={product.id} value={product.name}>
+                        {product.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block font-semibold mb-1">Quantity</label>

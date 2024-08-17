@@ -9,6 +9,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      console.log(username, password);
       await login(username, password);
       // Redirect or update state to reflect the logged-in status
     } catch (err) {

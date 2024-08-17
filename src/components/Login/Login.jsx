@@ -6,7 +6,7 @@ import axios from 'axios';
 import instance from '../../api/axios';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
@@ -35,7 +35,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(username, password);
+      console.log(email , password);
+      const data = await login(email, password);
       console.log(data);
       localStorage.setItem("user", JSON.stringify(data.user));
       navigate('/employees');
@@ -59,7 +60,7 @@ const Login = () => {
               type="email"
               id="email"
               className="mt-1 block w-full px-3 py-2 border-b-2 border-blue shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-4">

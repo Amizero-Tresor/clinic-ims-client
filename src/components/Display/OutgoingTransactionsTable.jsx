@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { createOutgoingTransaction, getOutgoingTransactions } from '../../services/transactionService';
+import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 
 const OutgoingTransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
@@ -29,6 +31,30 @@ const OutgoingTransactionsTable = () => {
 
     fetchTransactions();
   }, []);
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get('/api/employees'); // Adjust as necessary
+        console.log('Response:', response); // Log entire response object
+        console.log('Data:', response.data); // Log just the data
+  
+        // Check if the data is in the expected format
+        if (Array.isArray(response.data)) {
+          setEmployees(response.data);
+        } else {
+          console.error('Expected an array but received:', response.data);
+          setEmployees([]);
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error.message);
+        setEmployees([]);
+      }
+    };
+  
+    fetchEmployees();
+  }, []);
+  
+ 
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -45,7 +71,7 @@ const OutgoingTransactionsTable = () => {
       const newData = {
         productName: newTransaction.productName,
         quantity: parseInt(newTransaction.quantity),
-        employeeName: newTransaction.employeeName, // Using the actual value from the form
+        employeeName: newTransaction.employeeName,
         employeePhone: newTransaction.employeePhone
       };
       const addedTransaction = await createOutgoingTransaction(newData);
@@ -141,14 +167,20 @@ const OutgoingTransactionsTable = () => {
                 </div>
                 <div>
                   <label className="block font-semibold mb-1">Employee Name</label>
-                  <input
-                    type="text"
+                  <select
                     name="employeeName"
                     value={newTransaction.employeeName}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select an employee</option>
+                    {employees.map((employee) => (
+                      <option key={employee.id} value={employee.employeeName}>
+                        {employee.employeeName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block font-semibold mb-1">Employee Phone</label>
