@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { createOutgoingTransaction, getOutgoingTransactions } from '../../services/transactionService';
+import { getProducts } from '../../services/productService'; // Assuming you have a productService for fetching products
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
+import { getEmployees } from '../../services/employeeService';
 
 const OutgoingTransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [products, setProducts] = useState([]); // State to hold the fetched products
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
@@ -31,37 +34,55 @@ const OutgoingTransactionsTable = () => {
 
     fetchTransactions();
   }, []);
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('/api/employees'); // Adjust as necessary
-        console.log('Response:', response); // Log entire response object
-        console.log('Data:', response.data); // Log just the data
-  
-        // Check if the data is in the expected format
-        if (Array.isArray(response.data)) {
-          setEmployees(response.data);
-        } else {
-          console.error('Expected an array but received:', response.data);
-          setEmployees([]);
-        }
+        const response = await getEmployees();
+         console.log('Response:', response);
+
+      if(response.length>0){
+       return setEmployees(response)
+      }
+      setEmployees([])
       } catch (error) {
         console.error('Error fetching employees:', error.message);
         setEmployees([]);
       }
     };
-  
+
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data || []);
+      } catch (error) {
+        console.error('Error fetching products:', error.message);
+        setProducts([]);
+      }
+    };
+
     fetchEmployees();
+    fetchProducts();
   }, []);
-  
- 
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
   const handleChange = (e) => {
-    setNewTransaction({ ...newTransaction, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Update employeePhone based on selected employee
+    if (name === "employeeName") {
+      const selectedEmployee = employees.find((employee) => employee.employeeName === value);
+      setNewTransaction({
+        ...newTransaction,
+        [name]: value,
+        employeePhone: selectedEmployee ? selectedEmployee.employeePhone : "",
+      });
+    } else {
+      setNewTransaction({ ...newTransaction, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -72,7 +93,7 @@ const OutgoingTransactionsTable = () => {
         productName: newTransaction.productName,
         quantity: parseInt(newTransaction.quantity),
         employeeName: newTransaction.employeeName,
-        employeePhone: newTransaction.employeePhone
+        employeePhone: newTransaction.employeePhone,
       };
       const addedTransaction = await createOutgoingTransaction(newData);
       setTransactions([...transactions, addedTransaction]);
@@ -90,6 +111,9 @@ const OutgoingTransactionsTable = () => {
     }
   };
 
+  useEffect(()=>{
+    console.log("Employeees", employees)
+  },[employees])
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
@@ -145,14 +169,20 @@ const OutgoingTransactionsTable = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold mb-1">Product Name</label>
-                  <input
-                    type="text"
+                  <select
                     name="productName"
                     value={newTransaction.productName}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select a product</option>
+                    {products.map((product) => (
+                      <option key={product.id} value={product.productName}>
+                        {product.productName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block font-semibold mb-1">Quantity</label>
@@ -191,6 +221,7 @@ const OutgoingTransactionsTable = () => {
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
+                    readOnly // Make this field read-only as it auto-populates based on employee selection
                   />
                 </div>
               </div>

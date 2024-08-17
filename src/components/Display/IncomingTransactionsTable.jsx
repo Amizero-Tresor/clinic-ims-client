@@ -32,6 +32,7 @@ const IncomingTransactionTable = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
+        // console.log("products " , products)
         setProducts(data || []);
       } catch (error) {
         toast.error(`Error fetching products: ${error.message}`);
@@ -137,8 +138,8 @@ const IncomingTransactionTable = () => {
                   >
                     <option value="" disabled>Select a product</option>
                     {products.map((product) => (
-                      <option key={product.id} value={product.name}>
-                        {product.name}
+                      <option key={product.id} value={product.productName}>
+                        {product.productName}
                       </option>
                     ))}
                   </select>

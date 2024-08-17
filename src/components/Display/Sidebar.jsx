@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom'; // Use NavLink instead of Link for active state handling
 import Logo from "../../assets/LOGO2.svg";
+import logo from "../../assets/logo.png"
 import toast from 'react-hot-toast';
 
 const Sidebar = () => {
@@ -14,7 +15,7 @@ const Sidebar = () => {
   return (
     <div className="ml-3 bg-blue mt-5 h-[80%] flex flex-col items-center text-white pt-4 px-6 shadow-xl">
       <div className="font-display text-lg mb-8">
-        <img src={Logo} alt="Logo" />
+        <img src={logo} alt="Logo"  className='w-36 '/>
       </div>
       <div className="h-[60%] space-y-4 flex flex-col items-center justify-center">
         <NavLink

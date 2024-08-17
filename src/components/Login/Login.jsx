@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
-import Logo from "../../assets/LOGO.svg";
+import logo from "../../assets/logo.png"
 import axios from 'axios';
 import instance from '../../api/axios';
 
@@ -48,8 +48,8 @@ const Login = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center bg-[#F9FAFF]">
       <div className="bg-white flex flex-col p-8 rounded-lg shadow-lg w-full max-w-md items-center justify-center">
-        <img src={Logo} alt="" className='pb-3' />
-        <h2 className="text-center text-2xl font-bold mb-6 text-blue">Employee Login</h2>
+        <img src={logo} alt="" className='pb-3 w-36' />
+        <h2 className="text-center text-2xl font-bold mb-6 text-blue"> Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <form className='w-[90%]' onSubmit={handleLogin}>
           <div className="mb-6">

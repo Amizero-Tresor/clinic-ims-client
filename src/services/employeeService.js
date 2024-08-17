@@ -6,7 +6,7 @@ const API_BASE_URL = `${baseURL}/api/employees`; // Update to backend URL
 export const getEmployees = async () => {
   try {
     const response = await axios.get(API_BASE_URL);
-    console.log(response.data);  // Log the correct response data
+    // console.log(response.data);  // Log the correct response data
     return response.data;
   } catch (error) {
     console.error('Error fetching employees:', error);
