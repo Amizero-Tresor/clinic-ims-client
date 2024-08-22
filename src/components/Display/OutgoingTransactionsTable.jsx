@@ -217,7 +217,7 @@ const OutgoingTransactionsTable = () => {
                   <input
                     type="text"
                     name="employeePhone"
-                    value={newTransaction.employeePhone}
+                    value={employee.employeePhone}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
