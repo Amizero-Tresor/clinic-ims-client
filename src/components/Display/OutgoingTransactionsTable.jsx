@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { createOutgoingTransaction, getOutgoingTransactions } from '../../services/transactionService';
-import { getProducts } from '../../services/productService'; // Assuming you have a productService for fetching products
-import axios from 'axios';
+import { getProducts } from '../../services/productService'; 
 import { ClipLoader } from 'react-spinners';
 import { getEmployees } from '../../services/employeeService';
 
 const OutgoingTransactionsTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [products, setProducts] = useState([]); // State to hold the fetched products
+  const [products, setProducts] = useState([]); 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
@@ -39,12 +38,7 @@ const OutgoingTransactionsTable = () => {
     const fetchEmployees = async () => {
       try {
         const response = await getEmployees();
-         console.log('Response:', response);
-
-      if(response.length>0){
-       return setEmployees(response)
-      }
-      setEmployees([])
+        setEmployees(response.length > 0 ? response : []);
       } catch (error) {
         console.error('Error fetching employees:', error.message);
         setEmployees([]);
@@ -71,18 +65,7 @@ const OutgoingTransactionsTable = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Update employeePhone based on selected employee
-    if (name === "employeeName") {
-      const selectedEmployee = employees.find((employee) => employee.employeeName === value);
-      setNewTransaction({
-        ...newTransaction,
-        [name]: value,
-        employeePhone: selectedEmployee ? selectedEmployee.employeePhone : "",
-      });
-    } else {
-      setNewTransaction({ ...newTransaction, [name]: value });
-    }
+    setNewTransaction({ ...newTransaction, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -111,9 +94,6 @@ const OutgoingTransactionsTable = () => {
     }
   };
 
-  useEffect(()=>{
-    console.log("Employeees", employees)
-  },[employees])
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
@@ -217,11 +197,10 @@ const OutgoingTransactionsTable = () => {
                   <input
                     type="text"
                     name="employeePhone"
-                    value={employee.employeePhone}
+                    value={newTransaction.employeePhone}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
-                    readOnly // Make this field read-only as it auto-populates based on employee selection
                   />
                 </div>
               </div>
