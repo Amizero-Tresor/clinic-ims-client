@@ -13,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,8 @@ const Login = () => {
       return;
     }
 
+    setLoading(true); // Start loading
+
     try {
       const data = await login(email, password);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -65,6 +68,8 @@ const Login = () => {
       navigate('/employees');
     } catch (err) {
       toast.error('Invalid credentials.');
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -123,8 +128,35 @@ const Login = () => {
           <button
             type="submit"
             className="w-[70%] mx-[15%] py-2 px-4 bg-blue border border-transparent rounded-xl shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM2 12a10 10 0 0110-10V0C4.477 0 0 4.477 0 10h2zm12 8a8 8 0 01-8-8H2a10 10 0 0010 10v-2zm6-6a8 8 0 01-8 8v2a10 10 0 0010-10h-2zm-2 0a8 8 0 01-8-8H6a10 10 0 0010 10V12z"
+                  ></path>
+                </svg>
+                Logging in...
+              </div>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>
