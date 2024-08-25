@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, deleteProduct, updateProduct, addProduct } from '../../services/productService';
+import { getProducts, addProduct, updateProduct, deleteProduct } from '../../services/productService';
 import { ClipLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const [newProduct, setNewProduct] = useState({
-    productName: '',
-    price: '',
-    description: '',
+    name: '',
     category: '',
-    stock: ''
+    price: 0,
+    stock: 0,
   });
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -20,12 +19,11 @@ const ProductsTable = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        setProducts(data || []); // Safeguard to ensure products is always an array
+        setProducts(data || []);
       } catch (error) {
-        console.error('Error fetching products:', error.message);
-        setProducts([]); // Initialize to an empty array in case of error
+        toast.error(`Error , contact system admin`);
       } finally {
-        setLoading(false);  // Set loading to false after fetching products
+        setLoading(false);
       }
     };
 
@@ -43,29 +41,25 @@ const ProductsTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when submitting the form
     try {
       if (editingProduct) {
         await updateProduct(editingProduct.id, newProduct);
-        setProducts(products.map(product => 
-          product.id === editingProduct.id ? { ...product, ...newProduct } : product
-        ));
+        setProducts(products.map(prod => (prod.id === editingProduct.id ? { ...prod, ...newProduct } : prod)));
+        toast.success("Product updated successfully");
       } else {
         const addedProduct = await addProduct(newProduct);
         setProducts([...products, addedProduct]);
+        toast.success("Product added successfully");
       }
       setNewProduct({
-        productName: '',
-        price: '',
-        description: '',
+        name: '',
         category: '',
-        stock: ''
+        price: 0,
+        stock: 0,
       });
       togglePopup();
     } catch (error) {
-      console.error('Error saving product:', error.message);
-    } finally {
-      setLoading(false);  // Set loading to false after the submission process is done
+      toast.error(`Error saving product: ${error.message}`);
     }
   };
 
@@ -76,14 +70,12 @@ const ProductsTable = () => {
   };
 
   const handleDelete = async (id) => {
-    setLoading(true); // Set loading to true when deleting a product
     try {
       await deleteProduct(id);
-      setProducts(products.filter(product => product.id !== id));
+      setProducts(products.filter(prod => prod.id !== id));
+      toast.success("Product deleted successfully");
     } catch (error) {
-      console.error('Error deleting product:', error.message);
-    } finally {
-      setLoading(false); // Set loading to false after deletion
+      toast.error(`Error deleting product: ${error.message}`);
     }
   };
 
@@ -92,68 +84,106 @@ const ProductsTable = () => {
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Products</h3>
         <button 
-          className="w-[10%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+          className="w-[15%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
           onClick={togglePopup} 
         >
-          New Product
+          +
         </button>
       </div>
       <hr className="text-blue mb-3" />
       {loading ? 
-        <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
-          <h1>Loading</h1>
-          <ClipLoader size={20} color='black'/>
-        </div>
-        :
-      <table className="w-full text-left table-auto">
-        <thead className='w-full'>
-          <tr className="text-blue font-bold">
-            <th>Product Name</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody className='w-full'>
-          {products && products.length > 0 ? (
-            products.map((product, index) => (
-              <tr key={index}>
-                <td>{product.productName}</td>
-                <td className='w-full flex justify-end'>
-                  <button 
-                    className="bg-green-500 text-white px-4 py-2 rounded-[2rem] border border-transparent hover:border-green-500 hover:bg-white hover:text-green-500 transition-all duration-150" 
-                    onClick={() => handleEdit(product)}
-                  >
-                    Update
-                  </button>
-                  <button 
-                    className="bg-red-500 text-white px-4 py-2 rounded-[2rem] ml-2 border border-transparent hover:border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150" 
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+      <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+        <h1>Loading</h1>
+        <ClipLoader size={20} color='black'/>
+      </div>
+      :
+      products.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left table-auto">
+            <thead>
+              <tr className="text-blue font-bold">
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Category</th>
+                <th className="px-4 py-2">Price</th>
+                <th className="px-4 py-2">Stock</th>
+                <th className="w-full flex justify-end px-4 py-2"></th>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="2" className="text-center">No products available</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      }
+            </thead>
+            <tbody>
+              {products.map((product, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2">{product.name}</td>
+                  <td className="px-4 py-2">{product.category}</td>
+                  <td className="px-4 py-2">${product.price}</td>
+                  <td className="px-4 py-2">{product.stock}</td>
+                  <td className="w-full flex justify-end px-4 py-2">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="px-2 py-1 bg-blue text-white rounded-md mr-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="px-2 py-1 bg-red-500 text-white rounded-md"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p>No products found.</p>
+      )}
 
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">{editingProduct ? 'Update Product' : 'Add New Product'}</h2>
+          <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
+            <h2 className="text-xl font-bold mb-4">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold mb-1">Product Name</label>
                   <input
                     type="text"
-                    name="productName"
-                    value={newProduct.productName}
+                    name="name"
+                    value={newProduct.name}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Category</label>
+                  <input
+                    type="text"
+                    name="category"
+                    value={newProduct.category}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Price</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={newProduct.price}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Stock</label>
+                  <input
+                    type="number"
+                    name="stock"
+                    value={newProduct.stock}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required
@@ -172,7 +202,7 @@ const ProductsTable = () => {
                   type="submit"
                   className="px-4 py-2 bg-blue text-white rounded-md"
                 >
-                  {editingProduct ? 'Update' : 'Add'}
+                  {editingProduct ? 'Save Changes' : 'Add Product'}
                 </button>
               </div>
             </form>

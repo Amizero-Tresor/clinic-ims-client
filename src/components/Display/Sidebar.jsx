@@ -1,76 +1,44 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom'; // Use NavLink instead of Link for active state handling
-import Logo from "../../assets/LOGO2.svg";
-import logo from "../../assets/logo.png"
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AiOutlineClose } from 'react-icons/ai';
+import logo from "../../assets/logo.png";
 import toast from 'react-hot-toast';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const router = useNavigate();
-  const logout  = ()=>{
+  
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    toast.success("successfully logged out");
+    toast.success("Successfully logged out");
     router("/");
-  }
+  };
+
   return (
-    <div className="ml-3 bg-blue mt-5 h-[80%] flex flex-col items-center text-white pt-4 px-6 shadow-xl">
-      <div className="font-display text-lg mb-8">
-        <img src={logo} alt="Logo"  className='w-36 '/>
+    <div
+      className={`fixed z-50 bg-blue text-white w-[250px] rounded-lg h-full p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[80%] md:ml-3 md:mt-5 md:flex md:flex-col md:items-center md:shadow-xl`}
+    >
+      <div className="flex justify-between items-start mt-5 mb-8">
+        <img src={logo} alt="Logo" className="w-36" />
+        <button className="text-2xl md:hidden" onClick={toggleSidebar}>
+          <AiOutlineClose />
+        </button>
       </div>
-      <div className="h-[60%] space-y-4 flex flex-col items-center justify-center">
-        <NavLink
-          to="/employees"
-          className={({ isActive }) =>
-            `h-[3rem] px-5 flex items-center justify-center text-sm ${
-              isActive ? 'bg-white text-blue' : 'text-white hover:bg-white hover:text-blue'
-            } rounded-[2rem] font-display font-bold p-2 transition-all duration-700`
-          }
-        >
-          Employees
-        </NavLink>
-        <NavLink
-          to="/products"
-          className={({ isActive }) =>
-            `h-[3rem] px-5 flex items-center justify-center text-sm ${
-              isActive ? 'bg-white text-blue' : 'text-white hover:bg-white hover:text-blue'
-            } rounded-[2rem] font-display font-bold p-2 transition-all duration-700`
-          }
-        >
-          Products
-        </NavLink>
-        <NavLink
-          to="/stock"
-          className={({ isActive }) =>
-            `h-[3rem] px-5 flex items-center justify-center text-sm ${
-              isActive ? 'bg-white text-blue' : 'text-white hover:bg-white hover:text-blue'
-            } rounded-[2rem] font-display font-bold p-2 transition-all duration-700`
-          }
-        >
-          Stock
-        </NavLink>
-        <NavLink
-          to="/incomingTransactions"
-          className={({ isActive }) =>
-            `h-[3rem] px-5 flex items-center justify-center text-sm ${
-              isActive ? 'bg-white text-blue' : 'text-white hover:bg-white hover:text-blue'
-            } rounded-[2rem] font-display font-bold p-2 transition-all duration-700`
-          }
-        >
-          Incoming Transactions
-        </NavLink>
-        <NavLink
-          to="/outgoingTransactions"
-          className={({ isActive }) =>
-            `h-[3rem] px-5 flex items-center justify-center text-sm ${
-              isActive ? 'bg-white text-blue' : 'text-white hover:bg-white hover:text-blue'
-            } rounded-[2rem] font-display font-bold p-2 transition-all duration-700`
-          }
-        >
-          Outgoing Transactions
-        </NavLink>
+      <div className="space-y-4 flex flex-col items-center justify-center">
+        {['employees', 'products', 'stock', 'incomingTransactions', 'outgoingTransactions'].map((route) => (
+          <NavLink
+            key={route}
+            to={`/${route}`}
+            className={({ isActive }) =>
+              `h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base ${isActive ? 'bg-white text-blue' : 'hover:bg-white hover:text-blue'} rounded-full font-bold transition-all duration-150`
+            }
+          >
+            {route.charAt(0).toUpperCase() + route.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+          </NavLink>
+        ))}
         <button
           onClick={logout}
-          className={`h-[3rem] px-5 flex items-center justify-center text-sm text-white hover:bg-red-400 rounded-[2rem] font-display font-bold p-2 transition-all duration-700`}
+          className="h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base text-white hover:bg-red-400 rounded-full font-bold transition-all duration-150"
         >
           Logout
         </button>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createIncomingTransaction, getIncomingTransactions } from '../../services/transactionService';
-import { getProducts } from '../../services/productService'; // Assuming you have a productService for fetching products
+import { getProducts } from '../../services/productService';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
@@ -9,7 +9,7 @@ const IncomingTransactionTable = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]); // State to hold the fetched products
+  const [products, setProducts] = useState([]);
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
     quantity: 0,
@@ -22,7 +22,7 @@ const IncomingTransactionTable = () => {
         const data = await getIncomingTransactions();
         setTransactions(data || []);
       } catch (error) {
-        toast.error(`Error fetching incoming transactions: ${error.message}`);
+        toast.error(`Error , contact system admin`);
         setTransactions([]);
       } finally {
         setLoading(false);
@@ -32,10 +32,9 @@ const IncomingTransactionTable = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        // console.log("products " , products)
         setProducts(data || []);
       } catch (error) {
-        toast.error(`Error fetching products: ${error.message}`);
+        toast.error(`Error , contact system admin`);
         setProducts([]);
       }
     };
@@ -58,19 +57,17 @@ const IncomingTransactionTable = () => {
     try {
       const newData = {
         productName: newTransaction.productName,
-        quantity: parseInt(newTransaction.quantity),
+        quantity: newTransaction.quantity,
         expirationDate: newTransaction.expirationDate,
+        createdBy: user.name,
       };
-      const addedTransaction = await createIncomingTransaction(newData);
-      setTransactions([...transactions, addedTransaction]);
-      setNewTransaction({
-        productName: '',
-        quantity: 0,
-        expirationDate: '',
-      });
+      const savedTransaction = await createIncomingTransaction(newData);
+      setTransactions([...transactions, savedTransaction]);
+      setNewTransaction({ productName: "", quantity: 0, expirationDate: "" });
+      toast.success("Transaction successfully created");
       togglePopup();
     } catch (error) {
-      toast.error('Error saving transaction');
+      toast.error(`Transaction not created `);
     } finally {
       setLoading(false);
     }
@@ -80,53 +77,51 @@ const IncomingTransactionTable = () => {
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Incoming Transactions</h3>
-        {user?.type === "ADMIN" && (
-          <button 
-            className="w-[13%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
-            onClick={togglePopup} 
-          >
-            New Transaction
-          </button>
-        )}
+        <button 
+          className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+          onClick={togglePopup} 
+        >
+         +
+        </button>
       </div>
       <hr className="text-blue mb-3" />
       {loading ? 
-        <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
-          <h1>Loading</h1>
-          <ClipLoader size={20} color='black'/>
-        </div>
+      <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
+        <h1>Loading</h1>
+        <ClipLoader size={20} color='black'/>
+      </div>
       :
-        <table className="w-full text-left table-auto">
-          <thead>
-            <tr className="text-blue font-bold">
-              <th>Product Name</th>
-              <th>Quantity</th>
-              <th>Expiration Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.length > 0 ? (
-              transactions.map((transaction, index) => (
-                <tr key={index}>
-                  <td>{transaction.productName}</td>
-                  <td>{transaction.quantity}</td>
-                  <td>{new Date(transaction.expirationDate).toLocaleDateString()}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" className="text-center">No incoming transactions available.</td>
+      transactions.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left table-auto">
+            <thead className=''>
+              <tr className="text-blue font-bold">
+                <th className="px-4 py-2">Product Name</th>
+                <th className="px-4 py-2">Quantity</th>
+                <th className="px-4 py-2">Expiration Date</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      }
+            </thead>
+            <tbody>
+              {transactions.map((transaction, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2">{transaction.productName}</td>
+                  <td className="px-4 py-2">{transaction.quantity}</td>
+                  <td className="px-4 py-2">{new Date(transaction.expirationDate).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p>No transactions found.</p>
+      )}
+
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">Create New Transaction</h2>
+          <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
+            <h2 className="text-xl font-bold mb-4">Add New Transaction</h2>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold mb-1">Product Name</label>
                   <select
@@ -137,10 +132,8 @@ const IncomingTransactionTable = () => {
                     required
                   >
                     <option value="" disabled>Select a product</option>
-                    {products.map((product) => (
-                      <option key={product.id} value={product.productName}>
-                        {product.productName}
-                      </option>
+                    {products.map((product, index) => (
+                      <option key={index} value={product.name}>{product.name}</option>
                     ))}
                   </select>
                 </div>
@@ -158,7 +151,7 @@ const IncomingTransactionTable = () => {
                 <div>
                   <label className="block font-semibold mb-1">Expiration Date</label>
                   <input
-                    type="datetime-local"
+                    type="date"
                     name="expirationDate"
                     value={newTransaction.expirationDate}
                     onChange={handleChange}
@@ -179,7 +172,7 @@ const IncomingTransactionTable = () => {
                   type="submit"
                   className="px-4 py-2 bg-blue text-white rounded-md"
                 >
-                  Create
+                  Add Transaction
                 </button>
               </div>
             </form>
