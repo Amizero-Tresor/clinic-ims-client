@@ -22,7 +22,7 @@ const IncomingTransactionTable = () => {
         const data = await getIncomingTransactions();
         setTransactions(data || []);
       } catch (error) {
-        toast.error(`Error , contact system admin`);
+        toast.error('Error fetching incoming transactions, please contact the system administrator.');
         setTransactions([]);
       } finally {
         setLoading(false);
@@ -34,7 +34,7 @@ const IncomingTransactionTable = () => {
         const data = await getProducts();
         setProducts(data || []);
       } catch (error) {
-        toast.error(`Error , contact system admin`);
+        toast.error('Error fetching products, please contact the system administrator.');
         setProducts([]);
       }
     };
@@ -67,7 +67,7 @@ const IncomingTransactionTable = () => {
       toast.success("Transaction successfully created");
       togglePopup();
     } catch (error) {
-      toast.error(`Transaction not created `);
+      toast.error('Transaction not created, please try again later.');
     } finally {
       setLoading(false);
     }

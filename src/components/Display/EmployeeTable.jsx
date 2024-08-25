@@ -20,7 +20,7 @@ const EmployeeTable = ({ employees, setEmployees }) => {
         setEmployees(data || []);
         toast.success('Employees fetched successfully!');
       } catch (error) {
-        toast.error(`Error , contact system admin`);
+        toast.error('Error, contact system admin');
       } finally {
         setLoading(false);
       }
@@ -78,7 +78,7 @@ const EmployeeTable = ({ employees, setEmployees }) => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-6">
+    <div className="bg-white shadow-md rounded-xl p-6 overflow-x-hidden">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Employees</h3>
         <button 
@@ -96,7 +96,7 @@ const EmployeeTable = ({ employees, setEmployees }) => {
       </div>
       :
       employees.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-thumb-blue scrollbar-track-gray-100 scrollbar-thin">
           <table className="w-full text-left table-auto">
             <thead className=''>
               <tr className="text-blue font-bold">

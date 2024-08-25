@@ -82,8 +82,15 @@ const OutgoingTransactionsTable = () => {
       }
 
       const selectedEmployee = employees.find(employee => employee.name === newTransaction.employeeName);
-      if (selectedEmployee && selectedEmployee.phoneNumber !== newTransaction.employeePhone) {
-        toast.error("The phone number entered is different from the usual phone number of the selected employee.");
+      if (!selectedEmployee) {
+        toast.error("Employee not found.");
+        setLoading(false);
+        return;
+      }
+
+      // Check if the employee phone number matches
+      if (newTransaction.employeePhone !== selectedEmployee.phoneNumber) {
+        toast.error("Incorrect Phone Number");
         setLoading(false);
         return;
       }
@@ -91,17 +98,23 @@ const OutgoingTransactionsTable = () => {
       const newData = {
         productName: newTransaction.productName,
         quantity: newTransaction.quantity,
-        employeeName: newTransaction.employeeName,
+        employeeId: selectedEmployee.id,
         employeePhone: newTransaction.employeePhone,
         createdBy: user.name,
       };
-      const savedTransaction = await createOutgoingTransaction(newData);
-      setTransactions([...transactions, savedTransaction]);
-      setNewTransaction({ productName: "", quantity: 0, employeeName: "", employeePhone: "" });
+
+      await createOutgoingTransaction(newData);
+      setTransactions([...transactions, newData]);
+      setNewTransaction({
+        productName: "",
+        employeeName: "",
+        employeePhone: "",
+        quantity: 0,
+      });
       toast.success("Transaction successfully created");
       togglePopup();
     } catch (error) {
-      toast.error(`Transaction not created`);
+      toast.error(`Error creating transaction: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -128,21 +141,21 @@ const OutgoingTransactionsTable = () => {
       transactions.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full text-left table-auto">
-            <thead className=''>
+            <thead>
               <tr className="text-blue font-bold">
                 <th className="px-4 py-2">Product Name</th>
-                <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Employee Name</th>
                 <th className="px-4 py-2">Employee Phone</th>
+                <th className="px-4 py-2">Quantity</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((transaction, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2">{transaction.productName}</td>
-                  <td className="px-4 py-2">{transaction.quantity}</td>
                   <td className="px-4 py-2">{transaction.employeeName}</td>
                   <td className="px-4 py-2">{transaction.employeePhone}</td>
+                  <td className="px-4 py-2">{transaction.quantity}</td>
                 </tr>
               ))}
             </tbody>
@@ -174,17 +187,6 @@ const OutgoingTransactionsTable = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Quantity</label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={newTransaction.quantity}
-                    onChange={handleChange}
-                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-                <div>
                   <label className="block font-semibold mb-1">Employee Name</label>
                   <select
                     name="employeeName"
@@ -202,9 +204,20 @@ const OutgoingTransactionsTable = () => {
                 <div>
                   <label className="block font-semibold mb-1">Employee Phone</label>
                   <input
-                    type="text"
+                    type="tel"
                     name="employeePhone"
                     value={newTransaction.employeePhone}
+                    onChange={handleChange}
+                    className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Quantity</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={newTransaction.quantity}
                     onChange={handleChange}
                     className="w-full border-b-2 p-2 outline-none focus:border-blue-500"
                     required

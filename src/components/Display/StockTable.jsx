@@ -19,7 +19,7 @@ const StockTable = () => {
           setStocks([]);
         }
       } catch (error) {
-        toast.error(`Error , contact system admin`);
+        toast.error('Error, contact system admin');
       } finally {
         setLoading(false);
       }
@@ -34,36 +34,35 @@ const StockTable = () => {
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Stocks</h3>
       </div>
       <hr className="text-blue mb-3" />
-      {
-        loading ? 
+      {loading ? 
         <div className='w-full flex items-center justify-center mt-5 font-bold gap-3'>
           <h1>Loading</h1>
           <ClipLoader size={20} color='black'/>
         </div>
         :
         stocks.length > 0 ? (
-          <table className="w-full text-left table-auto">
-            <thead>
-              <tr className="text-blue font-bold">
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Expiration Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stocks.map((stock, index) => (
-                <tr key={index}>
-                  <td>{stock.productName}</td>
-                  <td>{stock.quantity}</td>
-                  <td>{new Date(stock.expirationDate).toLocaleDateString()}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left table-auto">
+              <thead>
+                <tr className="text-blue font-bold">
+                  <th className="px-4 py-2">Product Name</th>
+                  <th className="px-4 py-2">Quantity</th>
+                  <th className="px-4 py-2">Expiration Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {stocks.map((stock, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2">{stock.productName}</td>
+                    <td className="px-4 py-2">{stock.quantity}</td>
+                    <td className="px-4 py-2">{new Date(stock.expirationDate).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <tr>
-            <td colSpan="3" className="text-center">No stocks available.</td>
-          </tr>
+          <p>No stocks available.</p>
         )
       }
     </div>
