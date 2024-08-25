@@ -182,7 +182,7 @@ const OutgoingTransactionsTable = () => {
                   >
                     <option value="" disabled>Select a product</option>
                     {products.map((product, index) => (
-                      <option key={index} value={product.name}>{product.name}</option>
+                      <option key={index} value={product.productName}>{product.productName}</option>
                     ))}
                   </select>
                 </div>
@@ -197,7 +197,7 @@ const OutgoingTransactionsTable = () => {
                   >
                     <option value="" disabled>Select an employee</option>
                     {employees.map((employee, index) => (
-                      <option key={index} value={employee.name}>{employee.name}</option>
+                      <option key={index} value={employee.employeeName}>{employee.employeeName}</option>
                     ))}
                   </select>
                 </div>

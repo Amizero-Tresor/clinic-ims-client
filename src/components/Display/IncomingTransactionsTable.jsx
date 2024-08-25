@@ -133,7 +133,7 @@ const IncomingTransactionTable = () => {
                   >
                     <option value="" disabled>Select a product</option>
                     {products.map((product, index) => (
-                      <option key={index} value={product.name}>{product.name}</option>
+                      <option key={index} value={product.productName}>{product.productName}</option>
                     ))}
                   </select>
                 </div>
