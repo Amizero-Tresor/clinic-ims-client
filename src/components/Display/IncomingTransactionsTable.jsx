@@ -48,7 +48,11 @@ const IncomingTransactionTable = () => {
   };
 
   const handleChange = (e) => {
-    setNewTransaction({ ...newTransaction, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setNewTransaction({
+      ...newTransaction,
+      [name]: name === "quantity" ? Number(value) : value,
+    });
   };
 
   const handleSubmit = async (e) => {
