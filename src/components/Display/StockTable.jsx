@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getStocks, getStockById } from '../../services/stockService';
+import { getStocks } from '../../services/stockService';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 
 const StockTable = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notifiedProducts, setNotifiedProducts] = useState(new Set());
 
   useEffect(() => {
     const fetchStocks = async () => {
@@ -27,6 +28,31 @@ const StockTable = () => {
 
     fetchStocks();
   }, []);
+
+  useEffect(() => {
+    const checkExpirations = () => {
+      const today = new Date();
+      stocks.forEach(stock => {
+        const expirationDate = new Date(stock.expirationDate);
+        const diffInDays = Math.floor((expirationDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diffInDays >= 0 && diffInDays <= 3 && !notifiedProducts.has(stock.productName)) {
+          toast.warn(
+            `${stock.productName} is about to expire on ${expirationDate.toLocaleDateString()}.`,
+            {
+              autoClose: false,  // Allow user to close the toast
+              closeButton: true,
+            }
+          );
+          setNotifiedProducts(prev => new Set(prev.add(stock.productName)));
+        }
+      });
+    };
+
+    if (!loading) {
+      checkExpirations();
+    }
+  }, [stocks, loading, notifiedProducts]);
 
   return (
     <div className="bg-white shadow-md rounded-xl p-6">

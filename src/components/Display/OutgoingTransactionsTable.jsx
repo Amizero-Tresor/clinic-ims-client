@@ -84,16 +84,13 @@ const OutgoingTransactionsTable = () => {
         return;
       }
       
-      // Ensure that `newTransaction.quantity` is a number
       const quantity = Number(newTransaction.quantity);
-      
       if (isNaN(quantity) || quantity <= 0) {
         toast.error("Please enter a valid quantity.");
         setLoading(false);
         return;
       }
       
-      // Check if the selected product has enough stock
       if (selectedProduct.stock < quantity) {
         toast.error("Not enough stock available for the selected product.");
         setLoading(false);
@@ -107,7 +104,6 @@ const OutgoingTransactionsTable = () => {
         return;
       }
 
-      // Check if the employee phone number matches
       if (newTransaction.employeePhone !== selectedEmployee.phoneNumber) {
         toast.error("Incorrect Phone Number");
         setLoading(false);
@@ -186,7 +182,7 @@ const OutgoingTransactionsTable = () => {
       )}
 
       {isPopupOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
           <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
             <h2 className="text-xl font-bold mb-4">Add New Transaction</h2>
             <form onSubmit={handleSubmit}>
