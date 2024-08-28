@@ -66,7 +66,10 @@ const OutgoingTransactionsTable = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewTransaction({ ...newTransaction, [name]: value });
+    setNewTransaction({
+      ...newTransaction,
+      [name]: name === "quantity" ? Number(value) : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -74,14 +77,30 @@ const OutgoingTransactionsTable = () => {
     setLoading(true);
     
     try {
-      const selectedProduct = products.find(product => product.name === newTransaction.productName);
-      if (!selectedProduct || selectedProduct.stock < newTransaction.quantity) {
+      const selectedProduct = products.find(product => product.productName === newTransaction.productName);
+      if (!selectedProduct) {
+        toast.error("Please select a product.");
+        setLoading(false);
+        return;
+      }
+      
+      // Ensure that `newTransaction.quantity` is a number
+      const quantity = Number(newTransaction.quantity);
+      
+      if (isNaN(quantity) || quantity <= 0) {
+        toast.error("Please enter a valid quantity.");
+        setLoading(false);
+        return;
+      }
+      
+      // Check if the selected product has enough stock
+      if (selectedProduct.stock < quantity) {
         toast.error("Not enough stock available for the selected product.");
         setLoading(false);
         return;
       }
 
-      const selectedEmployee = employees.find(employee => employee.name === newTransaction.employeeName);
+      const selectedEmployee = employees.find(employee => employee.employeeName === newTransaction.employeeName);
       if (!selectedEmployee) {
         toast.error("Employee not found.");
         setLoading(false);
@@ -99,6 +118,7 @@ const OutgoingTransactionsTable = () => {
         productName: newTransaction.productName,
         quantity: newTransaction.quantity,
         employeeId: selectedEmployee.id,
+        employeeName: selectedEmployee.employeeName,
         employeePhone: newTransaction.employeePhone,
         createdBy: user.name,
       };

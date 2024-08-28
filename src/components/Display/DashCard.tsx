@@ -20,6 +20,7 @@ const DashCard = () => {
       setStock(stockData);
       setLoadingStock(false);
     };
+    
 
     fetchData();
   }, []);
@@ -32,7 +33,7 @@ const DashCard = () => {
       </header>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-8 w-full">
         <Cards title="Employees" count={employees.length} loading={loadingEmployees} />
-        <Cards title="Products in stock" count={stock.length} loading={loadingStock} />
+        <Cards title="Types of products" count={stock.length} loading={loadingStock} />
       </div>
     </>
   );

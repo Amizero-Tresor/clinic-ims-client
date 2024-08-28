@@ -64,6 +64,8 @@ const Login = () => {
     try {
       const data = await login(email, password);
       localStorage.setItem("user", JSON.stringify(data.user));
+      console.log(data);
+
       toast.success('Login successful!');
       navigate('/employees');
     } catch (err) {
