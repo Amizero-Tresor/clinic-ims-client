@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AiOutlineClose } from 'react-icons/ai';
 import logo from "../../assets/logo.png";
 import toast from 'react-hot-toast';
 
-const Sidebar = ({ isOpen, toggleSidebar, isPopupOpen }) => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const router = useNavigate();
-  const [sidebarWidth, setSidebarWidth] = useState('250px');
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -15,19 +14,9 @@ const Sidebar = ({ isOpen, toggleSidebar, isPopupOpen }) => {
     router("/");
   };
 
-  useEffect(() => {
-    // Adjust the sidebar width if popup is open
-    if (isPopupOpen) {
-      setSidebarWidth('200px'); // Adjust as needed
-    } else {
-      setSidebarWidth('250px');
-    }
-  }, [isPopupOpen]);
-
   return (
     <div
-      className={`fixed z-50 bg-blue text-white rounded-lg h-full p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[80%] md:ml-3 md:mt-5 md:flex md:flex-col md:items-center md:shadow-xl`}
-      style={{ width: sidebarWidth }}
+      className={`fixed z-50 bg-blue text-white w-[250px] rounded-lg h-full p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[80%] md:ml-3 md:mt-5 md:flex md:flex-col md:items-center md:shadow-xl lg:hidden`}
     >
       <div className="flex justify-between items-start mt-5 mb-8">
         <img src={logo} alt="Logo" className="w-36" />

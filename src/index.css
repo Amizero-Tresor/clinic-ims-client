@@ -3,3 +3,19 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+
+/* Global CSS */
+@media (max-width: 1235px) {
+    .sidebar {
+      display: none;
+    }
+  }
+  
+  .sidebar {
+    z-index: 30; /* Lower value */
+  }
+  
+  .popup {
+    z-index: 40; /* Higher value */
+  }
