@@ -40,26 +40,38 @@ const EmployeeTable = ({ employees, setEmployees }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (editingEmployee) {
-        await updateEmployee(editingEmployee.id, newEmployee);
-        setEmployees(employees.map(emp => (emp.id === editingEmployee.id ? { ...emp, ...newEmployee } : emp)));
-        toast.success('Employee updated successfully!');
-      } else {
-        const addedEmployee = await addEmployee(newEmployee);
-        setEmployees([...employees, addedEmployee]);
-        toast.success('Employee added successfully!');
-      }
-      setNewEmployee({
-        employeeName: '',
-        department: '',
-        phoneNumber: '',
-      });
-      togglePopup();
-    } catch (error) {
-      toast.error('Error saving employee: ' + error.message);
+    
+    const { phoneNumber } = newEmployee;
+
+    // Validate phoneNumber
+    const phoneNumberPattern = /^07\d{8}$/; // 07 followed by 8 digits
+
+    if (!phoneNumberPattern.test(phoneNumber)) {
+        toast.error('Invalid phone number! It must start with "07" and be exactly 10 digits.');
+        return;
     }
-  };
+
+    try {
+        if (editingEmployee) {
+            await updateEmployee(editingEmployee.id, newEmployee);
+            setEmployees(employees.map(emp => (emp.id === editingEmployee.id ? { ...emp, ...newEmployee } : emp)));
+            toast.success('Employee updated successfully!');
+        } else {
+            const addedEmployee = await addEmployee(newEmployee);
+            setEmployees([...employees, addedEmployee]);
+            toast.success('Employee added successfully!');
+        }
+        setNewEmployee({
+            employeeName: '',
+            department: '',
+            phoneNumber: '',
+        });
+        togglePopup();
+    } catch (error) {
+        toast.error('Error saving employee: ' + error.message);
+    }
+};
+
 
   const handleEdit = (employee) => {
     setNewEmployee(employee);

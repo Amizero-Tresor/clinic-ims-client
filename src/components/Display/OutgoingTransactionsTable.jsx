@@ -12,6 +12,7 @@ const OutgoingTransactionsTable = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false); // Track form submission state
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
     employeeName: "",
@@ -74,28 +75,31 @@ const OutgoingTransactionsTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return; // Prevent double submission
+
+    setSubmitting(true); // Set submitting to true
     setLoading(true);
-    
+
     try {
       const selectedProduct = products.find(product => product.productName === newTransaction.productName);
       if (!selectedProduct) {
         toast.error("Please select a product.");
+        setSubmitting(false);
         setLoading(false);
         return;
       }
       
-      // Ensure that `newTransaction.quantity` is a number
       const quantity = Number(newTransaction.quantity);
-      
       if (isNaN(quantity) || quantity <= 0) {
         toast.error("Please enter a valid quantity.");
+        setSubmitting(false);
         setLoading(false);
         return;
       }
       
-      // Check if the selected product has enough stock
       if (selectedProduct.stock < quantity) {
         toast.error("Not enough stock available for the selected product.");
+        setSubmitting(false);
         setLoading(false);
         return;
       }
@@ -103,13 +107,14 @@ const OutgoingTransactionsTable = () => {
       const selectedEmployee = employees.find(employee => employee.employeeName === newTransaction.employeeName);
       if (!selectedEmployee) {
         toast.error("Employee not found.");
+        setSubmitting(false);
         setLoading(false);
         return;
       }
 
-      // Check if the employee phone number matches
       if (newTransaction.employeePhone !== selectedEmployee.phoneNumber) {
         toast.error("Incorrect Phone Number");
+        setSubmitting(false);
         setLoading(false);
         return;
       }
@@ -125,17 +130,18 @@ const OutgoingTransactionsTable = () => {
 
       await createOutgoingTransaction(newData);
       setTransactions([...transactions, newData]);
+      toast.success("Transaction successfully created");
       setNewTransaction({
         productName: "",
         employeeName: "",
         employeePhone: "",
         quantity: 0,
       });
-      toast.success("Transaction successfully created");
       togglePopup();
     } catch (error) {
       toast.error(`Error creating transaction: ${error.message}`);
     } finally {
+      setSubmitting(false); // Reset submitting to false
       setLoading(false);
     }
   };
@@ -144,12 +150,14 @@ const OutgoingTransactionsTable = () => {
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Outgoing Transactions</h3>
-        <button 
-          className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
-          onClick={togglePopup} 
-        >
-         +
-        </button>
+        {user.type === "MANAGER" && (
+          <button 
+            className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+            onClick={togglePopup} 
+          >
+            +
+          </button>
+        )}
       </div>
       <hr className="text-blue mb-3" />
       {loading ? 
@@ -254,9 +262,10 @@ const OutgoingTransactionsTable = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue text-white rounded-md"
+                  className={`px-4 py-2 ${submitting ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded-md flex items-center justify-center gap-2`}
+                  disabled={submitting}
                 >
-                  Add Transaction
+                  {submitting ? <ClipLoader size={20} color="white" /> : "Add Transaction"}
                 </button>
               </div>
             </form>
@@ -268,3 +277,4 @@ const OutgoingTransactionsTable = () => {
 };
 
 export default OutgoingTransactionsTable;
+  

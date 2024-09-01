@@ -57,36 +57,46 @@ const IncomingTransactionTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate if quantity is not zero
+    if (newTransaction.quantity <= 0) {
+        toast.error('Quantity must be greater than zero');
+        return;
+    }
+
     setLoading(true);
     try {
-      const newData = {
-        productName: newTransaction.productName,
-        quantity: newTransaction.quantity,
-        expirationDate: newTransaction.expirationDate,
-        createdBy: user.name,
-      };
-      const savedTransaction = await createIncomingTransaction(newData);
-      setTransactions([...transactions, savedTransaction]);
-      setNewTransaction({ productName: "", quantity: 0, expirationDate: "" });
-      toast.success("Transaction successfully created");
-      togglePopup();
+        const newData = {
+            productName: newTransaction.productName,
+            quantity: newTransaction.quantity,
+            expirationDate: newTransaction.expirationDate,
+            createdBy: user.name,
+        };
+        const savedTransaction = await createIncomingTransaction(newData);
+        setTransactions([...transactions, savedTransaction]);
+        setNewTransaction({ productName: "", quantity: 0, expirationDate: "" });
+        toast.success("Transaction successfully created");
+        togglePopup();
     } catch (error) {
-      toast.error('Transaction not created, please try again later.');
+        toast.error('Transaction not created, please try again later.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <div className="flex justify-between pb-3">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Incoming Transactions</h3>
-        <button 
-          className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
-          onClick={togglePopup} 
-        >
-         +
-        </button>
+        {user.type === "ADMIN" && (
+          <button 
+            className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+            onClick={togglePopup} 
+          >
+            +
+          </button>
+        )}
       </div>
       <hr className="text-blue mb-3" />
       {loading ? 
