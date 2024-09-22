@@ -262,10 +262,10 @@ const OutgoingTransactionsTable = () => {
                 </button>
                 <button
                   type="submit"
-                  className={`px-4 py-2 ${submitting ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded-md flex items-center justify-center gap-2`}
+                  className={`px-4 py-2 ${submitting ? 'bg-gray-400' : 'bg-blue'} text-white rounded-md flex items-center justify-center gap-2`}
                   disabled={submitting}
                 >
-                  {submitting ? <ClipLoader size={20} color="white" /> : "Add Transaction"}
+                  {submitting ? <ClipLoader size={20}  /> : "Add Transaction"}
                 </button>
               </div>
             </form>

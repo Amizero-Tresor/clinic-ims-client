@@ -16,7 +16,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`fixed z-50 bg-blue text-white w-[250px] rounded-lg h-full p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[80%] md:ml-3 md:mt-5 md:flex md:flex-col md:items-center md:shadow-xl`}
+      className={`fixed  bg-blue text-white w-[250px] rounded-lg h-screen p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[100%] md:ml-3 md:m-1 md:flex md:flex-col md:items-center md:shadow-xl`}
     >
       <div className="flex justify-between items-start mt-5 mb-8">
         <img src={logo} alt="Logo" className="w-36" />
