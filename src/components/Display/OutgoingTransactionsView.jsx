@@ -22,7 +22,7 @@ const Dashboard = () => {
         </button>
       </div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`flex-1 p-4 md:p-8 ${sidebarOpen ? 'ml-[250px]' : ''}`}>
+      <div className={`flex-1 p-4 md:p-8 overflow-y-auto ${sidebarOpen ? 'ml-[250px]' : ''}`}>
         <DashCard />
         <OutgoingTransactionTable />
       </div>

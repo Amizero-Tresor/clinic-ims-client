@@ -21,7 +21,7 @@ const Dashboard = () => {
         <AiOutlineMenu />
       </button></div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex-1 p-4 md:p-8">
+      <div className="flex-1 p-4 md:p-8 overflow-y-auto">
         <DashCard />
         <IncomingTransactionTable />
       </div>
