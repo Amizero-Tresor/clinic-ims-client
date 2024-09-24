@@ -152,7 +152,7 @@ const OutgoingTransactionsTable = () => {
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Outgoing Transactions</h3>
         {user.type === "MANAGER" && (
           <button 
-            className="w-[23%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
+            className="w-[4%] h-[3rem] flex bg-blue justify-center items-center rounded-[2rem] text-white font-bold hover:bg-white hover:text-blue border border-blue transition-all duration-150" 
             onClick={togglePopup} 
           >
             +

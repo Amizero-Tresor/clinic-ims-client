@@ -16,7 +16,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`fixed  bg-blue text-white w-[250px] rounded-lg h-screen p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[100%] md:ml-3 md:m-1 md:flex md:flex-col md:items-center md:shadow-xl`}
+      className={`fixed  bg-blue text-white w-[250px]  h-screen py-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:h-[100%]   md:flex md:flex-col md:items-center md:shadow-xl`}
     >
       <div className="flex justify-between items-start mt-5 mb-8">
         <img src={logo} alt="Logo" className="w-36" />
@@ -24,13 +24,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <AiOutlineClose />
         </button>
       </div>
-      <div className="space-y-4 flex flex-col items-center justify-center">
+      <div className="space-y-3 w-full flex flex-col items-center justify-center ">
         {['employees', 'products', 'stock', 'incomingTransactions', 'outgoingTransactions'].map((route) => (
           <NavLink
             key={route}
             to={`/${route}`}
             className={({ isActive }) =>
-              `h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base ${isActive ? 'bg-white text-blue' : 'hover:bg-white hover:text-blue'} rounded-full font-bold transition-all duration-150`
+              `h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base ${isActive ? 'bg-white text-blue' : 'hover:bg-white hover:text-blue'} rounded-lg font-bold transition-all duration-150`
             }
           >
             {route.charAt(0).toUpperCase() + route.slice(1).replace(/([A-Z])/g, ' $1').trim()}
@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ))}
         <button
           onClick={logout}
-          className="h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base text-white hover:bg-red-400 rounded-full font-bold transition-all duration-150"
+          className="h-[2.5rem] md:h-[3rem] px-4 md:px-5 flex items-center justify-center text-sm md:text-base text-white hover:bg-red-400 rounded-lg font-bold transition-all duration-150"
         >
           Logout
         </button>
