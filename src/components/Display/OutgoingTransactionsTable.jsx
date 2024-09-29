@@ -175,6 +175,7 @@ const OutgoingTransactionsTable = () => {
                 <th className="px-4 py-2">Employee Name</th>
                 <th className="px-4 py-2">Employee Phone</th>
                 <th className="px-4 py-2">Quantity</th>
+                <th className="px-4 py-2">Created On</th>
               </tr>
             </thead>
             <tbody>
@@ -184,6 +185,7 @@ const OutgoingTransactionsTable = () => {
                   <td className="px-4 py-2">{transaction.employeeName}</td>
                   <td className="px-4 py-2">{transaction.employeePhone}</td>
                   <td className="px-4 py-2">{transaction.quantity}</td>
+                  <td className="px-4 py-2">{new Date(transaction.date).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
