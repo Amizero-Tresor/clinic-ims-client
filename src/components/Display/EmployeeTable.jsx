@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 const EmployeeTable = ({ employees, setEmployees }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false); // New state to manage form submission
   const [newEmployee, setNewEmployee] = useState({
     employeeName: '',
     department: '',
@@ -51,6 +52,8 @@ const EmployeeTable = ({ employees, setEmployees }) => {
         return;
     }
 
+    setSubmitting(true); // Set submitting to true before request
+
     try {
         if (editingEmployee) {
             await updateEmployee(editingEmployee.id, newEmployee);
@@ -69,9 +72,10 @@ const EmployeeTable = ({ employees, setEmployees }) => {
         togglePopup();
     } catch (error) {
         toast.error('Error saving employee: ' + error.message);
+    } finally {
+        setSubmitting(false); // Set submitting back to false after request
     }
-};
-
+  };
 
   const handleEdit = (employee) => {
     setNewEmployee(employee);
@@ -198,8 +202,9 @@ const EmployeeTable = ({ employees, setEmployees }) => {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue text-white rounded-md"
+                  disabled={submitting} // Disable the button while submitting
                 >
-                  {editingEmployee ? 'Update' : 'Add'}
+                  {submitting ? <ClipLoader size={20} color="white" /> : editingEmployee ? 'Update' : 'Add'}
                 </button>
               </div>
             </form>

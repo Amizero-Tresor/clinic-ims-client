@@ -257,26 +257,8 @@ const OutgoingTransactionsTable = () => {
               <div className="flex justify-end mt-4">
                 <button
                   type="button"
-                  className="px-4 py-2 bg-gray-500 text-white rounded-md mr-2"
-                  onClick={togglePopup}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className={`px-4 py-2 ${submitting ? 'bg-gray-400' : 'bg-blue'} text-white rounded-md flex items-center justify-center gap-2`}
-                  disabled={submitting}
-                >
-                  {submitting ? <ClipLoader size={20}  /> : "Add Transaction"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+                  className="px-4 py-2 bg-gray-500 text-white rounded mr-2" onClick={togglePopup} disabled={submitting} > Cancel </button> <button type="submit" className="px-4 py-2 bg-blue text-white rounded" disabled={submitting} > {submitting ? <ClipLoader size={20} color="white" /> : "Add Transaction"} </button> </div> </form> </div> </div> )} </div> ); };
 
-export default OutgoingTransactionsTable;
-  
+
+
+                  export default OutgoingTransactionsTable;

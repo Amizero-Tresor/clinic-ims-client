@@ -10,6 +10,7 @@ const IncomingTransactionTable = () => {
   const user = JSON.parse(localStorage.getItem("user") ?? "{}");
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const [submitting, setSubmitting] = useState(false); // New state for button loading
   const [newTransaction, setNewTransaction] = useState({
     productName: "",
     quantity: 0,
@@ -64,7 +65,7 @@ const IncomingTransactionTable = () => {
         return;
     }
 
-    setLoading(true);
+    setSubmitting(true); // Disable the button and show loader
     try {
         const newData = {
             productName: newTransaction.productName,
@@ -80,10 +81,9 @@ const IncomingTransactionTable = () => {
     } catch (error) {
         toast.error('Transaction not created, please try again later.');
     } finally {
-        setLoading(false);
+        setSubmitting(false); // Re-enable the button after the request is complete
     }
-};
-
+  };
 
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
@@ -123,8 +123,6 @@ const IncomingTransactionTable = () => {
                   <td className="px-4 py-2">{transaction.quantity}</td>
                   <td className="px-4 py-2">{new Date(transaction.expirationDate).toLocaleDateString()}</td>
                   <td className="px-4 py-2">{new Date(transaction.date).toLocaleDateString()}</td>
-
-
                 </tr>
               ))}
             </tbody>
@@ -188,9 +186,10 @@ const IncomingTransactionTable = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue text-white rounded-md"
+                  className="px-4 py-2 bg-blue text-white rounded-md flex items-center justify-center"
+                  disabled={submitting} // Disable button while submitting
                 >
-                  Add Transaction
+                  {submitting ? <ClipLoader size={15} color='white' /> : "Add Transaction"} {/* Show loader */}
                 </button>
               </div>
             </form>

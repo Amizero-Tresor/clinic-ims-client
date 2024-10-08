@@ -7,6 +7,7 @@ const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Loader for submit button
   const [newProduct, setNewProduct] = useState({
     productName: '',
   });
@@ -39,6 +40,7 @@ const ProductsTable = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Start loader
     try {
       if (editingProduct) {
         await updateProduct(editingProduct.id, newProduct);
@@ -53,6 +55,8 @@ const ProductsTable = () => {
       togglePopup();
     } catch (error) {
       toast.error('Error saving product: ' + error.message);
+    } finally {
+      setIsSubmitting(false); // End loader
     }
   };
 
@@ -154,9 +158,17 @@ const ProductsTable = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue text-white rounded-md"
+                  className="px-4 py-2 bg-blue text-white rounded-md flex items-center justify-center"
+                  disabled={isSubmitting} // Disable button while submitting
                 >
-                  {editingProduct ? 'Update' : 'Add'}
+                  {isSubmitting ? (
+                    <>
+                      <ClipLoader size={20} color="white" className="mr-2" />
+                      {editingProduct ? 'Updating...' : 'Adding...'}
+                    </>
+                  ) : (
+                    editingProduct ? 'Update' : 'Add'
+                  )}
                 </button>
               </div>
             </form>
